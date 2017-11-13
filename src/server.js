@@ -11,6 +11,19 @@ const app = express();
 app.use('/', express.static('client/build/'));
 
 // Make hello world on /api/test
+app.use('/api/helloWorld', (req,res) => { 
+  res.send('Hello World'); 
+});
+
+
+app.use('/api/helloJson', (req,res) => { 
+  res.json({
+    clave: '123456',
+    clave_2: 'ezeCrack2002',
+    array: [1,2,3,4,5],
+    object: {name:'Charlie'}
+  }); 
+});
 
 // Make /api/hostInfo Endpoint
 // Should return { numberOfCPus: , hostname, freeMem:}

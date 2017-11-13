@@ -18,7 +18,21 @@ Obtener user credentials:
 const client = new Twitter(config.auth.twitter);
 
 function tweets(req, res) {
-  return res.write('TODO');
+  const city = JSON.parse(req.query.city);
+  console.log(city, null, 2);
+  let cityName = city.name;
+  
+  client.get('search/tweets',{
+    q : cityName
+  }).then(
+    (response) => {
+      return res.json(mk_ok_response(response.statuses));
+      
+    }
+  ).catch((error) => {
+    return res.json(mk_error_response(error));
+  });
+
 }
 
 module.exports = tweets;
