@@ -62,22 +62,9 @@ function tweets(req, res) {
     q : cityName
   }).then(
     (response) => {
-      //console.log(response.statuses);
-      //let val1 = this.getUserWithMoreFollowers(response.statuses);
-      //console.log(response.statuses[0].user);
-      let userMoreFollowers = response.statuses[0].user;
-      
-      response.statuses.forEach((tweet) => {
-        
-        if(userMoreFollowers.followers_count < tweet.user.followers_count){
-    
-          userMoreFollowers = tweet.user;
-          
-        }
-        
-      });
-        
-      return userMoreFollowers;
+ 
+      return getUserWithMoreFollowers(response.statuses);
+ 
     }).
     then((user) => {
       
