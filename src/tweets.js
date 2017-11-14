@@ -28,35 +28,29 @@ class TweetsException {
 
 const client = new Twitter(config.auth.twitter);
 
-function getTweetsWithMoreFollowers(count, tweetsList){
+function getUserWithMoreFollowers(tweetsList){
   
   console.log(tweetsList);
   
-  //let tweets = JSON.parse(tweetsList); 
-  console.log(tweetsList);
   if(tweetsList.length === 0){
     
     throw new TweetsException("TweetsExcetion", "No found tweets"); 
   
   }
 
-  if(tweetsList.length >= 10){
+  let userMoreFollowers = tweetsList[0].user;
+  
+  tweetsList.forEach((tweet) => {
     
-    tweetsList.slice(0, 9);
-  
-  }
+    if(userMoreFollowers.followers_count < tweet.user.followers_count){
 
-  return this.getFirstAndSecondUser(tweetsList, count);
-
-}
-
-function getFirstAndSecondUser(tweets, count){
-  
-  tweets.sort(function compare(a,b){
-    console.log(a); 
-    return a.user.followers_count - b.user.followers_count;
-  
-  }).slice(0,count-1);
+      userMoreFollowers = tweet.user;
+      
+    }
+    
+  });
+    
+  return userMoreFollowers;
 }
 
 function tweets(req, res) {
@@ -68,24 +62,43 @@ function tweets(req, res) {
     q : cityName
   }).then(
     (response) => {
-//      console.log(response.statuses);
-      let jsonTweets = JSON.stringify(response.statuses);
+      //console.log(response.statuses);
+      //let val1 = this.getUserWithMoreFollowers(response.statuses);
+      //console.log(response.statuses[0].user);
+      let userMoreFollowers = response.statuses[0].user;
       
-      let tweets = this.getTweetsWithMoreFollowers(2,jsonTweets);
-      
-      tweets.map((tweet)=>{
+      response.statuses.forEach((tweet) => {
         
-        return {text: tweet.text, author: tweet.user.name};
-      
+        if(userMoreFollowers.followers_count < tweet.user.followers_count){
+    
+          userMoreFollowers = tweet.user;
+          
+        }
+        
       });
+        
+      return userMoreFollowers;
+    }).
+    then((user) => {
       
-      return res.json(mk_ok_response(tweets));
+      return client.get('statuses/user_timeline/',{ screen_name: user.screen_name, count: 2 });
       
-    }
-  ).catch((error) => {
-    return res.json(mk_error_response(error));
-  });
+    }).
+    then((tweets) => {
+      
+      let tweet1 = {};
+      let tweet2 = {};
+      tweet1.text = tweets[0].text;
+      tweet2.text = tweets[1].text;
+      tweet1.author = tweets[0].user.screen_name;
+      tweet2.author = tweets[1].user.screen_name;
+      
+      return res.json(mk_ok_response([tweet1,tweet2]));
 
+    }
+    ).catch((error) => {
+      return res.json(mk_error_response(error));
+    });
 }
 
 module.exports = tweets;
