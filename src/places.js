@@ -33,24 +33,28 @@ function places(req, res) {
     placesApi.details({key:apiKey, placeid : city.place_id}).then((address) => {
       console.log("ADDRESS:");
 
-      //console.log(address.res.text);
       let addressResponse = JSON.parse(address.res.text);
       
-      let d = addressResponse.result.geometry.location;
-      
-      let locationAddress = d.lat+','+d.lng;
+      let location = addressResponse.result.geometry.location;
 
       let params = {
-        location: locationAddress,
-        radius: 2000
+        location: location.lat+','+location.lng,
+        radius: 2000,
+        types: ['bar','restaurant']
       };
       
       let response = placesApi.nearbySearch(params);
       
       return response;
 
-    }).then((response2) => {
-      console.log(response2);
+    }).then((responseMarket) => {
+      
+      let markets = JSON.parse(responseMarket.res.text);
+      
+      console.log(markets);
+      
+      let resultMarket = markets.result;
+    
     });
     
     res.json(mk_places_response(cityName));
