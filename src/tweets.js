@@ -30,8 +30,6 @@ const client = new Twitter(config.auth.twitter);
 
 function getUserWithMoreFollowers(tweetsList){
   
-  console.log(tweetsList);
-  
   if(tweetsList.length === 0){
     
     throw new TweetsException("TweetsExcetion", "No found tweets"); 
