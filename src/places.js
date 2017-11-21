@@ -4,62 +4,53 @@ const config = require('./config');
 const placesApi = new GooglePlaces(config.auth.googleplaces);
 const apiKey = 'AIzaSyBCeaVu4a5yFboImr_j-THpjgQbmheDPEo';
 
-function mk_places_response(cityName) { 
-  return mk_ok_response(
-    [
-      {
-        name: 'fakePlace',
-        rating: 4.5,
-        description: 'An excelente place to be'
-      },
-      {
-        name: 'fake Mc Donald\'s',
-        rating: 2.5,
-        description: 'Cheap Fast Food',
-      }
-    ]
-  );
-}
-
 function places(req, res) {
   try {
     
-    let city = JSON.parse(req.query.city);
+    const city = JSON.parse(req.query.city);
     
     console.log(city);
 
     const cityName = city.name;
     
     placesApi.details({key:apiKey, placeid : city.place_id}).then((address) => {
-      console.log("ADDRESS:");
+      console.log('ADDRESS:');
 
-      let addressResponse = JSON.parse(address.res.text);
+      const addressResponse = JSON.parse(address.res.text);
       
-      let location = addressResponse.result.geometry.location;
+      const location = addressResponse.result.geometry.location;
 
-      let params = {
+      const params = {
         location: location.lat+','+location.lng,
         radius: 2000,
-        types: ['bar','restaurant']
+        types: ['bar','restaurant','cafe']
       };
       
-      let response = placesApi.nearbySearch(params);
+      const response = placesApi.nearbySearch(params);
       
       return response;
 
     }).then((responseMarket) => {
       
-      let markets = JSON.parse(responseMarket.res.text);
+      const markets = JSON.parse(responseMarket.res.text);
       
-      console.log(markets);
-      
-      let resultMarket = markets.result;
+      const resultMarket = markets.results;
+
+      resultMarket.sort((a, b) => {
+        return b.rating - a.rating;
+      });
     
+      let place1 = {};
+      let place2 = {};
+      place1.name = resultMarket[0].name;
+      place1.rating = resultMarket[0].rating;
+      place2.name = resultMarket[1].name;
+      place2.rating = resultMarket[1].rating;
+
+      return res.json(mk_ok_response([place1,place2]));
     });
-    
-    res.json(mk_places_response(cityName));
   } catch (error) {
-    res.json(mk_error_response(error));
+    return res.json(mk_error_response(error));
   }
 }
 
