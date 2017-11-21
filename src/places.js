@@ -34,18 +34,22 @@ function places(req, res) {
       
       const markets = JSON.parse(responseMarket.res.text);
       
+      console.log(markets);
+
       const resultMarket = markets.results;
 
       resultMarket.sort((a, b) => {
         return b.rating - a.rating;
       });
-    
+
       let place1 = {};
       let place2 = {};
       place1.name = resultMarket[0].name;
       place1.rating = resultMarket[0].rating;
+      place1.address = resultMarket[0].vicinity;
       place2.name = resultMarket[1].name;
       place2.rating = resultMarket[1].rating;
+      place2.address = resultMarket[1].vicinity;
 
       return res.json(mk_ok_response([place1,place2]));
     });
