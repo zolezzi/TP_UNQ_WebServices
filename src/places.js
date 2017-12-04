@@ -14,7 +14,6 @@ function places(req, res) {
     const cityName = city.name;
     
     placesApi.details({key:apiKey, placeid : city.place_id}).then((address) => {
-      console.log('ADDRESS:');
 
       const addressResponse = JSON.parse(address.res.text);
       
@@ -33,8 +32,6 @@ function places(req, res) {
     }).then((responseMarket) => {
       
       const markets = JSON.parse(responseMarket.res.text);
-      
-      console.log(markets);
 
       const resultMarket = markets.results;
 
