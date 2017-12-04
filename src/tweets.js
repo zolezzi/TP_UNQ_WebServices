@@ -62,16 +62,13 @@ function translateTweets(tweetsList){
   let promises = tweets.map((tweet) => {
     
     return translate(tweet.text, { to: "es" }).then((response => {
-      console.log("DATOS DE LA TRADUCCION");
-      console.log(response);
+
       tweet.text = response.text[0];  
       return tweet;
     })); 
   });
 
   return Promise.all(promises).then((data) => {
-    console.log("DATOS DE LAS PROMISES");
-    console.log(data);
     return data;      
   });
 }
@@ -84,8 +81,7 @@ function armTweets(list){
       author: tweet.user.screen_name,
       lang: tweet.lang
     };
-  });
-  
+  });  
 }
 
 function tweets(req, res) {
