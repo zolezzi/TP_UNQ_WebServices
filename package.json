@@ -18,7 +18,9 @@
     "serve-index": "^1.9.0",
     "twitter": "^1.7.1",
     "util.promisify": "^1.0.0",
-    "yandex-translate": "^2.1.1"
+    "weather-yahoo": "^1.0.2",
+    "yandex-translate": "^2.1.1",
+    "yql": "^1.0.2"
   },
   "devDependencies": {
     "eslint": "^4.10.0",
